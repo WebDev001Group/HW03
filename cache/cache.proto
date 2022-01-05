@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+service CacheService {
+    rpc GetKey(Key) returns (Value) {}
+    rpc SetKey(Node) returns (Cache) {}
+    rpc Clear(Empty) returns (Empty) {}
+}
+
+message Empty {}
+
+message Key {
+    string key = 1;
+}
+
+message Value {
+    string value = 1;
+}
+
+message Node {
+    string key = 1;
+    string value = 2;
+}
+
+message Cache {
+    repeated Node cache = 1;
+}
