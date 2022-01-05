@@ -22,9 +22,9 @@ server.addService(cacheProto.CacheService.service, {
     getKey: (_, callback) => {
         mutex.acquire()
             .then(function (release) {
-                const key = _.request.key
+                const key = parse(_.request.key)
 
-                const value = cache.getKey(key)
+                const value = parse(cache.getKey(key))
 
                 console.log(cache.all());
 
@@ -45,8 +45,8 @@ server.addService(cacheProto.CacheService.service, {
     setKey: (_, callback) => {
         mutex.acquire()
             .then(function (release) {
-                const key = _.request.key
-                const value = _.request.value
+                const key = parse(_.request.key)
+                const value = parse(_.request.value)
 
                 cache.setKey(key, value)
 
