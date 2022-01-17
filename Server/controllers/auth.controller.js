@@ -4,11 +4,10 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 
-const User = db.users;
-const RefreshToken = db.refreshTokens;
+const { users: User, refreshTokens: RefreshToken } = db;
 
 function signUp(req, res) {
-    User.Create({
+    User.create({
         username: req.body.username,
         password: bcrypt.hashSync(req.body.password, 8),
         role: "User"
@@ -28,7 +27,7 @@ function signIn(req, res) {
         where: {
             username: req.body.username
         }
-    }).then(user => {
+    }).then(async (user) => {
         if (!user) {
             return res.status(404).send({ message: "Invalid Username or Password" });
         }
@@ -39,7 +38,7 @@ function signIn(req, res) {
         );
 
         if (!passwordIsValid) {
-            return res.status(401).send({
+            return res.status(404).send({
                 message: "Invalid Username or Password!"
             });
         }
@@ -48,8 +47,7 @@ function signIn(req, res) {
         const token = jwt.sign(payload, config.secret, {
             expiresIn: config.jwtExpiration
         })
-
-        const refresh = await RefreshToken.createToken(user.userId, payload.jti);
+        let refresh = await RefreshToken.createToken(user.userId, payload.jti)
 
         res.status(200).send({
             message: "login successfully!",
@@ -63,7 +61,7 @@ function signIn(req, res) {
 }
 
 
-function refresh(req, res) {
+async function refresh(req, res) {
     const accessToken = req.body.accessToken;
     const refreshToken = req.body.refreshToken;
 
@@ -103,11 +101,11 @@ function refresh(req, res) {
         });
 
         RefreshToken.destroy({ where: { token: refresh_token_obj.token } });
-        const newRefreshToken = RefreshToken.createToken(decodedJwt.payload.uid, payload.jti);
+        const newRefreshToken = await RefreshToken.createToken(decodedJwt.payload.uid, payload.jti);
 
         return res.status(200).send({
             accessToken: newAccessToken,
-            refreshToken: newRefreshToken,
+            refreshToken: newRefreshToken.token,
             message: "successfull"
         });
     }

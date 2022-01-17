@@ -35,12 +35,12 @@ db.refreshTokens = require("../models/refreshToken.model.js")(sequelize, Sequeli
 db.users.hasMany(db.notes, { as: "notes" });
 db.users.hasMany(db.refreshTokens, { as: "refreshTokens" })
 
-db.notes.belognsTo(db.users, {
+db.notes.belongsTo(db.users, {
     foreignKey: "userId",
     as: "user"
 });
 
-db.refreshTokens.belognsTo(db.users, {
+db.refreshTokens.belongsTo(db.users, {
     foreignKey: "userId",
     as: "user"
 });
