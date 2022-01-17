@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    RefreshToken.createToken = async function (user, jti) {
+    RefreshToken.createToken = async function (userId, jti) {
         let expiredAt = new Date();
 
         expiredAt.setSeconds(expiredAt.getSeconds() + config.jwtRefreshExpiration);
@@ -29,7 +29,7 @@ module.exports = (sequelize, Sequelize) => {
         let refreshToken = await this.create({
             token: _token,
             jti: jti,
-            userId: user.userId,
+            userId: userId,
             expiryDate: expiredAt.getTime(),
         });
 
