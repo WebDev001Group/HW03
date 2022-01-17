@@ -16,6 +16,6 @@ app.listen(3000, () => {
 
 app.use("/auth", authRoutes);
 
-app.use("/note", notesRoutes);
+app.use("/notes", notesRoutes);
 
 

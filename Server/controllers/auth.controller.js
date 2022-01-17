@@ -43,7 +43,7 @@ function signIn(req, res) {
             });
         }
 
-        const payload = { uid: user.userId, role: user.role, jti: uuidv4() }
+        const payload = { uid: user.id, role: user.role, jti: uuidv4() }
         const token = jwt.sign(payload, config.secret, {
             expiresIn: config.jwtExpiration
         })

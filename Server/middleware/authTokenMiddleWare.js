@@ -4,7 +4,6 @@ const db = require("../models");
 const User = db.users;
 
 function verifyJwtToken(req, res, next) {
-    console.log(req.headers);
     let authHeader = req.headers["authorization"];
     if (!authHeader) {
         return res.status(401).send({
