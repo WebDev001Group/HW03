@@ -4,7 +4,22 @@ const { users: User, refreshTokens: RefreshToken, notes: Note } = db;
 
 function getNoteById(req, res) {
     const id = req.params.id;
-    return res.status(200).send({ "uid": id });
+    const ownerId = req.userId;
+    const role = req.role;
+
+    Note.findByPk(id)
+        .then(note => {
+            if (!note) {
+                res.status(404).send({ message: "not found!" });
+            }
+            if (role !== "Admin" && ownerId !== note.userId) {
+                return res.status(403).send({ message: "you can only view your own notes!" });
+            }
+            return res.status(200).send({ note: note });
+        })
+        .catch(err => {
+            res.status(500).send({ message: err.message });
+        })
 }
 
 function createNote(req, res) {
@@ -51,17 +66,62 @@ async function updateNote(req, res) {
             }
         })
         .catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: err.message
             });
         });
 }
 
 
+function getAllNotes(req, res) {
+    const userId = req.userId;
+    const role = req.role;
+    let condition = role === "Admin" ? {} : { userId: userId }
+
+    Note.findAll({ where: condition })
+        .then(notes => {
+            return res.status(200).send({ notes: notes });
+
+        })
+        .catch(err => {
+            return res.status(500).send({ message: err.message });
+        });
+}
+
+async function deleteNoteById(req, res) {
+    const noteId = req.params.id;
+    const role = req.role;
+    const userId = req.userId;
+
+    let note = await Note.findByPk(noteId);
+    if (!note) {
+        return res.status(404).send({ message: "not found!" })
+    }
+
+    if (role !== "Admin" && note.userId !== userId) {
+        return res.status(403).send({ message: "you can only delete your own notes!" });
+    }
+
+    Note.destroy({ where: { noteId: noteId } })
+        .then(num => {
+            if (num == 1) {
+                res.status(200).send({ messge: "deleted successfully!" });
+            }
+            else {
+                res.status(404).send({ message: "delete failed!" });
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: err.message });
+        });
+}
+
 module.exports = {
     getNoteById,
     createNote,
-    updateNote
+    updateNote,
+    getAllNotes,
+    deleteNoteById
 }
 
 

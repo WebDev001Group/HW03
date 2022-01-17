@@ -4,6 +4,12 @@ const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require("./routes/noteRoutes");
 const db = require("./models");
 
+var corsOptions = {
+    origin: "http://localhost:8000"
+};
+
+app.use(cors(corsOptions));
+
 db.sequelize.sync();
 
 app.use(express.json());
