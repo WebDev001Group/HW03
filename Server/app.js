@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const authRoutes = require("./routes/authRoutes")
+const authRoutes = require("./routes/authRoutes");
+const notesRoutes = require("./routes/noteRoutes");
 const db = require("./models");
 
 db.sequelize.sync();
@@ -14,4 +15,7 @@ app.listen(3000, () => {
 
 
 app.use("/auth", authRoutes);
+
+app.use("/note", notesRoutes);
+
 

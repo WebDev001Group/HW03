@@ -92,7 +92,7 @@ async function refresh(req, res) {
         }
         var dateNow = new Date();
 
-        if (decodedJwt.exp > dateNow.getTime() / 1000) {
+        if (decodedJwt.payload.exp > dateNow.getTime() / 1000) {
             return res.status(400).send({ message: "access token is not expired!" });
         }
         const payload = { uid: decodedJwt.payload.uid, role: decodedJwt.payload.role, jti: uuidv4() }
@@ -105,7 +105,7 @@ async function refresh(req, res) {
 
         return res.status(200).send({
             accessToken: newAccessToken,
-            refreshToken: newRefreshToken.token,
+            refreshToken: newRefreshToken,
             message: "successfull"
         });
     }
