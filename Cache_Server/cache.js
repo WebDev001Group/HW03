@@ -26,7 +26,7 @@ server.addService(cacheProto.CacheService.service, {
 
                 const value = parse(cache.getKey(key))
 
-                console.log(cache.all());
+                console.log(cache);
 
                 if (value === null) {
                     callback({
@@ -50,7 +50,7 @@ server.addService(cacheProto.CacheService.service, {
 
                 cache.setKey(key, value)
 
-                console.log(cache.all());
+                console.log(cache);
 
                 callback(null, {
                     cache: cache.all()
@@ -73,7 +73,7 @@ server.addService(cacheProto.CacheService.service, {
                 } else {
                     cache.deleteKey(key)
 
-                    console.log(cache.all());
+                    console.log(cache);
                     
                     callback(null, {})
                 }
