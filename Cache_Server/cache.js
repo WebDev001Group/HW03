@@ -59,6 +59,28 @@ server.addService(cacheProto.CacheService.service, {
                 release()
             })
     },
+    deleteKey: (_, callback) => {
+        mutex.acquire()
+            .then(function (release) {
+                const key = parse(_.request.key)
+
+                if (cache.getKey(key) == null) {
+                    callback({
+                        code: 404,
+                        message: "key not found",
+                        status: grpc.status.INVALID_ARGUMENT
+                    })
+                } else {
+                    cache.deleteKey(key)
+
+                    console.log(cache.all());
+                    
+                    callback(null, {})
+                }
+                
+                release()
+            })
+    },
     clear: (_, callback) => {
         mutex.acquire()
             .then(function (release) {
