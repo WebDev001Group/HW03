@@ -3,6 +3,7 @@ syntax = "proto3";
 service CacheService {
     rpc GetKey(Key) returns (Value) {}
     rpc SetKey(Node) returns (Cache) {}
+    rpc DeleteKey(Key) returns (Empty) {}
     rpc Clear(Empty) returns (Empty) {}
 }
 
