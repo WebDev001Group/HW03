@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "type": "commonjs",
   "scripts": {
@@ -17,5 +16,6 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
     "sequelize": "^6.13.0"
-  }
+  },
+  "description": ""
 }
