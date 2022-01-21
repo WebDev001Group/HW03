@@ -31,6 +31,7 @@ module.exports = (sequelize, Sequelize) => {
             jti: jti,
             userId: userId,
             expiryDate: expiredAt.getTime(),
+            revoke: false
         });
 
         return refreshToken.token;

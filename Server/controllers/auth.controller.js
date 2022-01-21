@@ -47,7 +47,7 @@ function signIn(req, res) {
         const token = jwt.sign(payload, config.secret, {
             expiresIn: config.jwtExpiration
         })
-        let refresh = await RefreshToken.createToken(user.userId, payload.jti)
+        let refresh = await RefreshToken.createToken(user.id, payload.jti)
 
         res.status(200).send({
             message: "login successfully!",
