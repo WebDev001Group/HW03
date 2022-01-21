@@ -3,7 +3,7 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require("./routes/noteRoutes");
 const db = require("./models");
-const cors = require("cors")
+const cors = require('cors');
 
 var corsOptions = {
     origin: "http://localhost:3000"
