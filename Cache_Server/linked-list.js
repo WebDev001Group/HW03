@@ -70,6 +70,26 @@ class Cache {
         return f;
     }
 
+    deleteKey(key) {
+        var {
+            prev,
+            f
+        } = this.find(key)
+
+        if (f !== null) {
+            if (this.head.key === key) 
+                this.head = this.head.next
+            if (this.tail.key === key)
+                this.tail = prev
+
+            if (prev !== null)
+                prev.next = f.next
+
+            this.len--;
+        }
+        return f;
+    }
+
     clear() {
         this.head = null;
         this.tail = null;
