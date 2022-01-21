@@ -1,24 +1,27 @@
 const db = require("../models");
 const { users: User, refreshTokens: RefreshToken, notes: Note } = db;
 
-//const cacheCrud = require('../CacheHandler/cacheCrud');
+const cacheCrud = require('../CacheHandler/cacheCrud');
 
-function getNoteById(req, res) {
-    const id = req.params.id;
+async function getNoteById(req, res) {
+    let id = req.params.id;
     const ownerId = req.userId;
     const role = req.role;
 
-    //cacheCrud.getKey(id);
+
+    await cacheCrud.getKey(id);
 
     Note.findByPk(id)
-        .then(note => {
+        .then(async (note) => {
             if (!note) {
                 res.status(404).send({ message: "not found!" });
             }
             if (role !== "Admin" && ownerId !== note.userId) {
                 return res.status(403).send({ message: "you can only view your own notes!" });
             }
-            //cacheCrud.setKey(id, note);
+
+            await cacheCrud.setKey(id, note.get({ plain: true }));
+
             return res.status(200).send({ note: note });
         })
         .catch(err => {

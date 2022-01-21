@@ -1,18 +1,34 @@
 const client = require("./client");
 
-function getKey(key) {
-    client.getKey({ key: key }, (error, value) => {
+async function getKey(key) {
+    let value = await new Promise(function (resolve, reject) {
+        client.getKey({ key }, (error, obj) => {
+            if (error) {
 
+            }
+            else {
+                resolve(JSON.parse(obj.value));
+            }
+
+        });
     });
+    return value;
 }
 
 
-function setKey(key, value) {
-    obj = { key, value };
-    console.log(obj);
-    client.setKey(obj, (error, caches) => {
-
-    });
+async function setKey(key, value) {
+    obj = { key, value: JSON.stringify(value) };
+    await new Promise(function (resolve, reject) {
+        client.setKey(obj, (error, caches) => {
+            if (error) {
+                console.log("error in setting key value in cache!");
+                reject();
+            }
+            else {
+                resolve();
+            }
+        });;
+    })
 }
 
 
