@@ -9,7 +9,10 @@ async function getNoteById(req, res) {
     const role = req.role;
 
 
-    await cacheCrud.getKey(id);
+    let cacheReturned = await cacheCrud.getKey("note:" + id);
+    if (cacheReturned.status == true) {
+        return res.status(200).send({ note: cacheReturned.value });
+    }
 
     Note.findByPk(id)
         .then(async (note) => {
@@ -20,7 +23,7 @@ async function getNoteById(req, res) {
                 return res.status(403).send({ message: "you can only view your own notes!" });
             }
 
-            await cacheCrud.setKey(id, note.get({ plain: true }));
+            await cacheCrud.setKey("note:" + id, note.get({ plain: true }));
 
             return res.status(200).send({ note: note });
         })
@@ -67,8 +70,10 @@ async function updateNote(req, res) {
     }
 
     Note.update(req.body, { where: { noteId: noteId } })
-        .then((num) => {
+        .then(async (num) => {
             if (num == 1) {
+                await cacheCrud.setKey("note:" + noteId, req.body);
+                await cacheCrud.deleteKey("user:" + userId);
                 return res.status(200).send({ message: "update successfully!" });
             }
             else {
@@ -83,15 +88,20 @@ async function updateNote(req, res) {
 }
 
 
-function getAllNotes(req, res) {
+async function getAllNotes(req, res) {
     const userId = req.userId;
     const role = req.role;
     let condition = role === "Admin" ? {} : { userId: userId }
 
-    Note.findAll({ where: condition })
-        .then(notes => {
-            return res.status(200).send({ notes: notes });
+    let cacheReturned = await cacheCrud.getKey("user:" + userId);
+    if (cacheReturned.status == true) {
+        return res.status(200).send({ notes: cacheReturned.value });
+    }
 
+    Note.findAll({ where: condition })
+        .then(async (notes) => {
+            if (role !== "Admin") await cacheCrud.setKey("user:" + userId, notes);
+            return res.status(200).send({ notes: notes });
         })
         .catch(err => {
             return res.status(500).send({ message: err.message });
@@ -113,8 +123,10 @@ async function deleteNoteById(req, res) {
     }
 
     Note.destroy({ where: { noteId: noteId } })
-        .then(num => {
+        .then(async (num) => {
             if (num == 1) {
+                await cacheCrud.deleteKey("note:" + noteId);
+                await cacheCrud.deleteKey("user:" + userId);
                 res.status(200).send({ messge: "deleted successfully!" });
             }
             else {
