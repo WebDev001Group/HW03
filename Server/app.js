@@ -2,12 +2,15 @@ const express = require("express");
 const app = express();
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require("./routes/noteRoutes");
+const rateLimitMiddleware = require('./middleware/rateLimitMiddleWare');
 const db = require("./models");
 const cors = require('cors');
 
 var corsOptions = {
     origin: "http://localhost:8000"
 };
+
+app.use(rateLimitMiddleware.rateLimitVerifier);
 
 app.use(cors(corsOptions));
 
