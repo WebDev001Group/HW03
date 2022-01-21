@@ -7,6 +7,11 @@ const { v4: uuidv4 } = require("uuid");
 const { users: User, refreshTokens: RefreshToken } = db;
 
 function signUp(req, res) {
+
+    if (!req.body.username || !req.body.password) {
+        return res.status(400).send({ message: "the username and password must have value!" });
+    }
+
     User.create({
         username: req.body.username,
         password: bcrypt.hashSync(req.body.password, 8),
@@ -22,6 +27,10 @@ function signUp(req, res) {
 
 
 function signIn(req, res) {
+
+    if (!req.body.username || !req.body.password) {
+        return res.status(400).send({ message: "the username and password must have value!" });
+    }
 
     User.findOne({
         where: {

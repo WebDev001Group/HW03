@@ -40,6 +40,10 @@ function createNote(req, res) {
     const description = req.body.description;
 
     if (!title || !description) {
+        return res.status(400).send({ message: "the title and description must have value!" });
+    }
+
+    if (!title || !description) {
         res.status(400).send({ message: "title or descritpion can not be empty!" });
     }
     Note.create({
@@ -58,6 +62,10 @@ async function updateNote(req, res) {
     const userId = req.userId;
     const role = req.role;
     const noteId = req.params.id;
+
+    if (!req.body.title || !req.body.description) {
+        return res.status(400).send({ message: "the title and description must have value!" });
+    }
 
     let note = await Note.findByPk(noteId);
 
