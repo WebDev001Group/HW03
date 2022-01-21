@@ -1,5 +1,6 @@
 const grpc = require("@grpc/grpc-js");
-const PROTO_PATH = "./cache.proto";
+const PROTO_PATH = "../common_configs/cache.proto";
+const cacheConfig = require('../common_configs/cache.config');
 var protoLoader = require("@grpc/proto-loader");
 const options = {
     keepCase: true,
@@ -15,7 +16,7 @@ const Cache = require('./linked-list.js').Cache
 
 const parse = (arg) => /^-?[0-9]+$/.test(arg) ? Number.parseInt(arg) : arg
 
-const cache = new Cache(parse(process.argv[3]))
+const cache = new Cache(cacheConfig.max)
 const mutex = new Mutex()
 
 server.addService(cacheProto.CacheService.service, {
@@ -74,10 +75,10 @@ server.addService(cacheProto.CacheService.service, {
                     cache.deleteKey(key)
 
                     console.log(cache);
-                    
+
                     callback(null, {})
                 }
-                
+
                 release()
             })
     },
@@ -97,10 +98,10 @@ server.addService(cacheProto.CacheService.service, {
 
 let port = parse(process.argv[2])
 server.bindAsync(
-    `localhost:9000`,
+    `localhost:${cacheConfig.port}`,
     grpc.ServerCredentials.createInsecure(),
     (error, port) => {
-        console.log(`Server running at localhost:9000`);
+        console.log(`Server running at localhost:${cacheConfig.port}`);
         server.start();
     }
 );

@@ -1,5 +1,5 @@
 class Cache {
-    constructor(max = 100) {
+    constructor(max) {
         this.head = null
         this.tail = null
         this.len = 0
@@ -77,7 +77,7 @@ class Cache {
         } = this.find(key)
 
         if (f !== null) {
-            if (this.head.key === key) 
+            if (this.head.key === key)
                 this.head = this.head.next
             if (this.tail.key === key)
                 this.tail = prev
